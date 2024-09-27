@@ -5,10 +5,11 @@ using VContainer.Unity;
 
 public class GameLifetimeScope : LifetimeScope
 {
+    [SerializeField] private Player.Player _player;
     
     protected override void Configure(IContainerBuilder builder)
     {
-        
+        builder.RegisterInstance(_player).AsSelf().AsImplementedInterfaces();
         
         RegisterMessagePipe(builder);
     }
