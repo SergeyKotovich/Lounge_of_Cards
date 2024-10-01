@@ -1,23 +1,38 @@
+using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 
 public class CardDealer : MonoBehaviour
 {
     [SerializeField] private Deck _deck;
-    private Player.Player _player;
+    private List<Player.Player> _players;
+    private ITrump _turnManager;
 
     [Inject]
-    public void Construct(Player.Player player)
+    public void Construct(List<Player.Player> players, ITrump turnManager)
     {
-        _player = player;
+        _turnManager = turnManager;
+        _players = players;
     }
-    
+
     public void DealCards()
     {
-        if (!_player.IsHandFull())
+        foreach (var player in _players)
         {
-           var card = _deck.GetCard();
-           _player.SetPosition(card);
+            while (!player.IsHandFull())
+            {
+                var card = _deck.GetCard();
+                player.AddCard(card);
+            }
         }
+        SetTrumpCard();
+    }
+
+    private void SetTrumpCard()
+    {
+        var trump = _deck.GetCard();
+        trump.transform.position = transform.position;
+        trump.transform.rotation = Quaternion.Euler(0, -90, 90);
+        _turnManager.SetTrump(trump);
     }
 }

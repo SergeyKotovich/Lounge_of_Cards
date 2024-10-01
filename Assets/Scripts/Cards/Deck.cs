@@ -4,11 +4,27 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    [field: SerializeField] public List<Card> ListCards { get; private set; }
+    [SerializeField] private List<Card> _listCards; 
+    private readonly Stack<Card> _deckCards = new();
+
+    private void Awake()
+    {
+        ShuffleDeck();
+        
+        foreach (var card in _listCards)
+        {
+            _deckCards.Push(card);
+        }
+    }
 
     public Card GetCard()
     {
-      var card =  ListCards.LastOrDefault();
-      return card;
+        return _deckCards.Pop();
+    }
+    
+    private void ShuffleDeck()
+    {
+        var randomNumber = new System.Random();
+        _listCards = _listCards.OrderBy(_ => randomNumber.Next()).ToList();
     }
 }
